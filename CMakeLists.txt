@@ -1,3 +1,6 @@
+set(CMAKE_C_COMPILER afl-clang-fast)
+set(CMAKE_CXX_COMPILER afl-clang-fast++)
+
 if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW) # link to full path of libs
     cmake_policy(SET CMP0005 NEW) # escapes in add_definitions
@@ -61,8 +64,8 @@ add_custom_target(generate)
 #Output all binaries at top level
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
 
-option(ENABLE_SDL "Build the SDL port" OFF)
-option(ENABLE_WX "Build the wxWidgets port" ON)
+option(ENABLE_SDL "Build the SDL port" ON)
+option(ENABLE_WX "Build the wxWidgets port" OFF)
 option(ENABLE_DEBUGGER "Enable the debugger" ON)
 option(ENABLE_ASAN "Enable -fsanitize=<option>, address by default, requires debug build" OFF)
 

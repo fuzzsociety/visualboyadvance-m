@@ -38,6 +38,9 @@ static const uint8_t fontdata2[2048] = {
 void drawText(uint8_t* screen, int pitch, int x, int y,
     const char* string, bool trans)
 {
+    // !!!AFL
+    return;
+    
     screen += y * pitch;
     int inc = 2;
     switch (systemColorDepth) {

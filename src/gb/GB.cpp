@@ -4595,7 +4595,17 @@ void gbEmulate(int ticksToStop)
 
     gbUpdateJoypads(true);
 
+    unsigned long aflCounter = 1000;
+
     while (1) {
+        // include a counter in the emulator
+        // whenever the aflCounter reaches 0
+        // exit (1000 instructions)
+        printf("cnt %d\n",aflCounter);
+        if (aflCounter-- == 0) {
+            exit(0);
+        }
+
         uint16_t oldPCW = PC.W;
 
         if (IFF & 0x80) {

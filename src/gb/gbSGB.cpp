@@ -290,6 +290,9 @@ void gbSgbDrawBorderTile(int x, int y, int tile, int attr)
 
 void gbSgbRenderBorder()
 {
+    // !!!AFL
+    return;
+    
     if (gbBorderOn) {
         uint8_t* fromAddress = gbSgbBorder;
 

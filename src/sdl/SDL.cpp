@@ -878,9 +878,8 @@ void sdlInitVideo()
 
     sdlResizeVideo();
 }
-#if defined(KMOD_GUI)
-#define KMOD_META KMOD_GUI
-#endif
+
+#define KMOD_META 0xff
 
 #define MOD_KEYS (KMOD_CTRL | KMOD_SHIFT | KMOD_ALT | KMOD_META)
 #define MOD_NOCTRL (KMOD_SHIFT | KMOD_ALT | KMOD_META)
@@ -1521,397 +1520,408 @@ void SetHomeDataDir()
 	mkdir(homeDataDir, 0755);
 }
 
+__AFL_FUZZ_INIT();
+
 int main(int argc, char** argv)
 {
-    fprintf(stdout, "%s\n", vba_name_and_subversion);
+    unsigned char *buf = __AFL_FUZZ_TESTCASE_BUF;
+    while (__AFL_LOOP(10000)) {
+        fprintf(stdout, "%s\n", vba_name_and_subversion);
 
-    home = argv[0];
-    SetHome(home);
-    SetHomeConfigDir();
-    SetHomeDataDir();
+        home = argv[0];
+        SetHome(home);
+        SetHomeConfigDir();
+        SetHomeDataDir();
 
-    frameSkip = 2;
-    gbBorderOn = 0;
+        frameSkip = 2;
+        gbBorderOn = 0;
 
-    parseDebug = true;
+        parseDebug = true;
 
-    gb_effects_config.stereo = 0.0;
-    gb_effects_config.echo = 0.0;
-    gb_effects_config.surround = false;
-    gb_effects_config.enabled = false;
+        gb_effects_config.stereo = 0.0;
+        gb_effects_config.echo = 0.0;
+        gb_effects_config.surround = false;
+        gb_effects_config.enabled = false;
 
-    LoadConfig(); // Parse command line arguments (overrides ini)
-    ReadOpts(argc, argv);
+        LoadConfig(); // Parse command line arguments (overrides ini)
+        ReadOpts(argc, argv);
+        /*
+        // Initialization routines for key maps, user preferences and GameBoy Advance ROMs were removed.
 
-    inputSetKeymap(PAD_1, KEY_LEFT, ReadPrefHex("Joy0_Left"));
-    inputSetKeymap(PAD_1, KEY_RIGHT, ReadPrefHex("Joy0_Right"));
-    inputSetKeymap(PAD_1, KEY_UP, ReadPrefHex("Joy0_Up"));
-    inputSetKeymap(PAD_1, KEY_DOWN, ReadPrefHex("Joy0_Down"));
-    inputSetKeymap(PAD_1, KEY_BUTTON_A, ReadPrefHex("Joy0_A"));
-    inputSetKeymap(PAD_1, KEY_BUTTON_B, ReadPrefHex("Joy0_B"));
-    inputSetKeymap(PAD_1, KEY_BUTTON_L, ReadPrefHex("Joy0_L"));
-    inputSetKeymap(PAD_1, KEY_BUTTON_R, ReadPrefHex("Joy0_R"));
-    inputSetKeymap(PAD_1, KEY_BUTTON_START, ReadPrefHex("Joy0_Start"));
-    inputSetKeymap(PAD_1, KEY_BUTTON_SELECT, ReadPrefHex("Joy0_Select"));
-    inputSetKeymap(PAD_1, KEY_BUTTON_SPEED, ReadPrefHex("Joy0_Speed"));
-    inputSetKeymap(PAD_1, KEY_BUTTON_CAPTURE, ReadPrefHex("Joy0_Capture"));
-    inputSetKeymap(PAD_2, KEY_LEFT, ReadPrefHex("Joy1_Left"));
-    inputSetKeymap(PAD_2, KEY_RIGHT, ReadPrefHex("Joy1_Right"));
-    inputSetKeymap(PAD_2, KEY_UP, ReadPrefHex("Joy1_Up"));
-    inputSetKeymap(PAD_2, KEY_DOWN, ReadPrefHex("Joy1_Down"));
-    inputSetKeymap(PAD_2, KEY_BUTTON_A, ReadPrefHex("Joy1_A"));
-    inputSetKeymap(PAD_2, KEY_BUTTON_B, ReadPrefHex("Joy1_B"));
-    inputSetKeymap(PAD_2, KEY_BUTTON_L, ReadPrefHex("Joy1_L"));
-    inputSetKeymap(PAD_2, KEY_BUTTON_R, ReadPrefHex("Joy1_R"));
-    inputSetKeymap(PAD_2, KEY_BUTTON_START, ReadPrefHex("Joy1_Start"));
-    inputSetKeymap(PAD_2, KEY_BUTTON_SELECT, ReadPrefHex("Joy1_Select"));
-    inputSetKeymap(PAD_2, KEY_BUTTON_SPEED, ReadPrefHex("Joy1_Speed"));
-    inputSetKeymap(PAD_2, KEY_BUTTON_CAPTURE, ReadPrefHex("Joy1_Capture"));
-    inputSetKeymap(PAD_3, KEY_LEFT, ReadPrefHex("Joy2_Left"));
-    inputSetKeymap(PAD_3, KEY_RIGHT, ReadPrefHex("Joy2_Right"));
-    inputSetKeymap(PAD_3, KEY_UP, ReadPrefHex("Joy2_Up"));
-    inputSetKeymap(PAD_3, KEY_DOWN, ReadPrefHex("Joy2_Down"));
-    inputSetKeymap(PAD_3, KEY_BUTTON_A, ReadPrefHex("Joy2_A"));
-    inputSetKeymap(PAD_3, KEY_BUTTON_B, ReadPrefHex("Joy2_B"));
-    inputSetKeymap(PAD_3, KEY_BUTTON_L, ReadPrefHex("Joy2_L"));
-    inputSetKeymap(PAD_3, KEY_BUTTON_R, ReadPrefHex("Joy2_R"));
-    inputSetKeymap(PAD_3, KEY_BUTTON_START, ReadPrefHex("Joy2_Start"));
-    inputSetKeymap(PAD_3, KEY_BUTTON_SELECT, ReadPrefHex("Joy2_Select"));
-    inputSetKeymap(PAD_3, KEY_BUTTON_SPEED, ReadPrefHex("Joy2_Speed"));
-    inputSetKeymap(PAD_3, KEY_BUTTON_CAPTURE, ReadPrefHex("Joy2_Capture"));
-    inputSetKeymap(PAD_4, KEY_LEFT, ReadPrefHex("Joy3_Left"));
-    inputSetKeymap(PAD_4, KEY_RIGHT, ReadPrefHex("Joy3_Right"));
-    inputSetKeymap(PAD_4, KEY_UP, ReadPrefHex("Joy3_Up"));
-    inputSetKeymap(PAD_4, KEY_DOWN, ReadPrefHex("Joy3_Down"));
-    inputSetKeymap(PAD_4, KEY_BUTTON_A, ReadPrefHex("Joy3_A"));
-    inputSetKeymap(PAD_4, KEY_BUTTON_B, ReadPrefHex("Joy3_B"));
-    inputSetKeymap(PAD_4, KEY_BUTTON_L, ReadPrefHex("Joy3_L"));
-    inputSetKeymap(PAD_4, KEY_BUTTON_R, ReadPrefHex("Joy3_R"));
-    inputSetKeymap(PAD_4, KEY_BUTTON_START, ReadPrefHex("Joy3_Start"));
-    inputSetKeymap(PAD_4, KEY_BUTTON_SELECT, ReadPrefHex("Joy3_Select"));
-    inputSetKeymap(PAD_4, KEY_BUTTON_SPEED, ReadPrefHex("Joy3_Speed"));
-    inputSetKeymap(PAD_4, KEY_BUTTON_CAPTURE, ReadPrefHex("Joy3_Capture"));
-    inputSetKeymap(PAD_1, KEY_BUTTON_AUTO_A, ReadPrefHex("Joy0_AutoA"));
-    inputSetKeymap(PAD_1, KEY_BUTTON_AUTO_B, ReadPrefHex("Joy0_AutoB"));
-    inputSetKeymap(PAD_2, KEY_BUTTON_AUTO_A, ReadPrefHex("Joy1_AutoA"));
-    inputSetKeymap(PAD_2, KEY_BUTTON_AUTO_B, ReadPrefHex("Joy1_AutoB"));
-    inputSetKeymap(PAD_3, KEY_BUTTON_AUTO_A, ReadPrefHex("Joy2_AutoA"));
-    inputSetKeymap(PAD_3, KEY_BUTTON_AUTO_B, ReadPrefHex("Joy2_AutoB"));
-    inputSetKeymap(PAD_4, KEY_BUTTON_AUTO_A, ReadPrefHex("Joy3_AutoA"));
-    inputSetKeymap(PAD_4, KEY_BUTTON_AUTO_B, ReadPrefHex("Joy3_AutoB"));
-    inputSetMotionKeymap(KEY_LEFT, ReadPrefHex("Motion_Left"));
-    inputSetMotionKeymap(KEY_RIGHT, ReadPrefHex("Motion_Right"));
-    inputSetMotionKeymap(KEY_UP, ReadPrefHex("Motion_Up"));
-    inputSetMotionKeymap(KEY_DOWN, ReadPrefHex("Motion_Down"));
+        inputSetKeymap(PAD_1, KEY_LEFT, ReadPrefHex("Joy0_Left"));
+        inputSetKeymap(PAD_1, KEY_RIGHT, ReadPrefHex("Joy0_Right"));
+        inputSetKeymap(PAD_1, KEY_UP, ReadPrefHex("Joy0_Up"));
+        inputSetKeymap(PAD_1, KEY_DOWN, ReadPrefHex("Joy0_Down"));
+        inputSetKeymap(PAD_1, KEY_BUTTON_A, ReadPrefHex("Joy0_A"));
+        inputSetKeymap(PAD_1, KEY_BUTTON_B, ReadPrefHex("Joy0_B"));
+        inputSetKeymap(PAD_1, KEY_BUTTON_L, ReadPrefHex("Joy0_L"));
+        inputSetKeymap(PAD_1, KEY_BUTTON_R, ReadPrefHex("Joy0_R"));
+        inputSetKeymap(PAD_1, KEY_BUTTON_START, ReadPrefHex("Joy0_Start"));
+        inputSetKeymap(PAD_1, KEY_BUTTON_SELECT, ReadPrefHex("Joy0_Select"));
+        inputSetKeymap(PAD_1, KEY_BUTTON_SPEED, ReadPrefHex("Joy0_Speed"));
+        inputSetKeymap(PAD_1, KEY_BUTTON_CAPTURE, ReadPrefHex("Joy0_Capture"));
+        inputSetKeymap(PAD_2, KEY_LEFT, ReadPrefHex("Joy1_Left"));
+        inputSetKeymap(PAD_2, KEY_RIGHT, ReadPrefHex("Joy1_Right"));
+        inputSetKeymap(PAD_2, KEY_UP, ReadPrefHex("Joy1_Up"));
+        inputSetKeymap(PAD_2, KEY_DOWN, ReadPrefHex("Joy1_Down"));
+        inputSetKeymap(PAD_2, KEY_BUTTON_A, ReadPrefHex("Joy1_A"));
+        inputSetKeymap(PAD_2, KEY_BUTTON_B, ReadPrefHex("Joy1_B"));
+        inputSetKeymap(PAD_2, KEY_BUTTON_L, ReadPrefHex("Joy1_L"));
+        inputSetKeymap(PAD_2, KEY_BUTTON_R, ReadPrefHex("Joy1_R"));
+        inputSetKeymap(PAD_2, KEY_BUTTON_START, ReadPrefHex("Joy1_Start"));
+        inputSetKeymap(PAD_2, KEY_BUTTON_SELECT, ReadPrefHex("Joy1_Select"));
+        inputSetKeymap(PAD_2, KEY_BUTTON_SPEED, ReadPrefHex("Joy1_Speed"));
+        inputSetKeymap(PAD_2, KEY_BUTTON_CAPTURE, ReadPrefHex("Joy1_Capture"));
+        inputSetKeymap(PAD_3, KEY_LEFT, ReadPrefHex("Joy2_Left"));
+        inputSetKeymap(PAD_3, KEY_RIGHT, ReadPrefHex("Joy2_Right"));
+        inputSetKeymap(PAD_3, KEY_UP, ReadPrefHex("Joy2_Up"));
+        inputSetKeymap(PAD_3, KEY_DOWN, ReadPrefHex("Joy2_Down"));
+        inputSetKeymap(PAD_3, KEY_BUTTON_A, ReadPrefHex("Joy2_A"));
+        inputSetKeymap(PAD_3, KEY_BUTTON_B, ReadPrefHex("Joy2_B"));
+        inputSetKeymap(PAD_3, KEY_BUTTON_L, ReadPrefHex("Joy2_L"));
+        inputSetKeymap(PAD_3, KEY_BUTTON_R, ReadPrefHex("Joy2_R"));
+        inputSetKeymap(PAD_3, KEY_BUTTON_START, ReadPrefHex("Joy2_Start"));
+        inputSetKeymap(PAD_3, KEY_BUTTON_SELECT, ReadPrefHex("Joy2_Select"));
+        inputSetKeymap(PAD_3, KEY_BUTTON_SPEED, ReadPrefHex("Joy2_Speed"));
+        inputSetKeymap(PAD_3, KEY_BUTTON_CAPTURE, ReadPrefHex("Joy2_Capture"));
+        inputSetKeymap(PAD_4, KEY_LEFT, ReadPrefHex("Joy3_Left"));
+        inputSetKeymap(PAD_4, KEY_RIGHT, ReadPrefHex("Joy3_Right"));
+        inputSetKeymap(PAD_4, KEY_UP, ReadPrefHex("Joy3_Up"));
+        inputSetKeymap(PAD_4, KEY_DOWN, ReadPrefHex("Joy3_Down"));
+        inputSetKeymap(PAD_4, KEY_BUTTON_A, ReadPrefHex("Joy3_A"));
+        inputSetKeymap(PAD_4, KEY_BUTTON_B, ReadPrefHex("Joy3_B"));
+        inputSetKeymap(PAD_4, KEY_BUTTON_L, ReadPrefHex("Joy3_L"));
+        inputSetKeymap(PAD_4, KEY_BUTTON_R, ReadPrefHex("Joy3_R"));
+        inputSetKeymap(PAD_4, KEY_BUTTON_START, ReadPrefHex("Joy3_Start"));
+        inputSetKeymap(PAD_4, KEY_BUTTON_SELECT, ReadPrefHex("Joy3_Select"));
+        inputSetKeymap(PAD_4, KEY_BUTTON_SPEED, ReadPrefHex("Joy3_Speed"));
+        inputSetKeymap(PAD_4, KEY_BUTTON_CAPTURE, ReadPrefHex("Joy3_Capture"));
+        inputSetKeymap(PAD_1, KEY_BUTTON_AUTO_A, ReadPrefHex("Joy0_AutoA"));
+        inputSetKeymap(PAD_1, KEY_BUTTON_AUTO_B, ReadPrefHex("Joy0_AutoB"));
+        inputSetKeymap(PAD_2, KEY_BUTTON_AUTO_A, ReadPrefHex("Joy1_AutoA"));
+        inputSetKeymap(PAD_2, KEY_BUTTON_AUTO_B, ReadPrefHex("Joy1_AutoB"));
+        inputSetKeymap(PAD_3, KEY_BUTTON_AUTO_A, ReadPrefHex("Joy2_AutoA"));
+        inputSetKeymap(PAD_3, KEY_BUTTON_AUTO_B, ReadPrefHex("Joy2_AutoB"));
+        inputSetKeymap(PAD_4, KEY_BUTTON_AUTO_A, ReadPrefHex("Joy3_AutoA"));
+        inputSetKeymap(PAD_4, KEY_BUTTON_AUTO_B, ReadPrefHex("Joy3_AutoB"));
+        inputSetMotionKeymap(KEY_LEFT, ReadPrefHex("Motion_Left"));
+        inputSetMotionKeymap(KEY_RIGHT, ReadPrefHex("Motion_Right"));
+        inputSetMotionKeymap(KEY_UP, ReadPrefHex("Motion_Up"));
+        inputSetMotionKeymap(KEY_DOWN, ReadPrefHex("Motion_Down"));
+        */
+        if (!sdlCheckDirectory(screenShotDir))
+            screenShotDir = NULL;
+        if (!sdlCheckDirectory(saveDir))
+            saveDir = NULL;
+        if (!sdlCheckDirectory(batteryDir))
+            batteryDir = NULL;
 
-    if (!sdlCheckDirectory(screenShotDir))
-        screenShotDir = NULL;
-    if (!sdlCheckDirectory(saveDir))
-        saveDir = NULL;
-    if (!sdlCheckDirectory(batteryDir))
-        batteryDir = NULL;
+        sdlSaveKeysSwitch = (ReadPrefHex("saveKeysSwitch"));
+        sdlOpenglScale = (ReadPrefHex("openGLscale"));
 
-    sdlSaveKeysSwitch = (ReadPrefHex("saveKeysSwitch"));
-    sdlOpenglScale = (ReadPrefHex("openGLscale"));
-
-    if (optPrintUsage) {
-        usage(argv[0]);
-        exit(-1);
-    }
-
-    if (!debugger) {
-        if (optind >= argc) {
-            systemMessage(0, "Missing image name");
+        if (optPrintUsage) {
             usage(argv[0]);
             exit(-1);
         }
-    }
 
-    if (optind < argc) {
-        char* szFile = argv[optind];
-
-        utilStripDoubleExtension(szFile, filename);
-        char* p = strrchr(filename, '.');
-
-        if (p)
-            *p = 0;
-
-        if (autoPatch && patchNum == 0) {
-            char* tmp;
-            // no patch given yet - look for ROMBASENAME.ips
-            tmp = (char*)malloc(strlen(filename) + 4 + 1);
-            sprintf(tmp, "%s.ips", filename);
-            patchNames[patchNum] = tmp;
-            patchNum++;
-
-            // no patch given yet - look for ROMBASENAME.ups
-            tmp = (char*)malloc(strlen(filename) + 4 + 1);
-            sprintf(tmp, "%s.ups", filename);
-            patchNames[patchNum] = tmp;
-            patchNum++;
-			
-            // no patch given yet - look for ROMBASENAME.bps
-            tmp = (char*)malloc(strlen(filename) + 4 + 1);
-            sprintf(tmp, "%s.bps", filename);
-            patchNames[patchNum] = tmp;
-            patchNum++;
-
-            // no patch given yet - look for ROMBASENAME.ppf
-            tmp = (char*)malloc(strlen(filename) + 4 + 1);
-            sprintf(tmp, "%s.ppf", filename);
-            patchNames[patchNum] = tmp;
-            patchNum++;
+        if (!debugger) {
+            if (optind >= argc) {
+                systemMessage(0, "Missing image name");
+                usage(argv[0]);
+                exit(-1);
+            }
         }
 
-        soundInit();
+        if (optind < argc) {
+            char* szFile = argv[optind];
 
-        bool failed = false;
+            utilStripDoubleExtension(szFile, filename);
+            char* p = strrchr(filename, '.');
 
-        IMAGE_TYPE type = utilFindType(szFile);
+            if (p)
+                *p = 0;
 
-        if (type == IMAGE_UNKNOWN) {
-            systemMessage(0, "Unknown file type %s", szFile);
-            exit(-1);
-        }
-        cartridgeType = (int)type;
+            if (autoPatch && patchNum == 0) {
+                char* tmp;
+                // no patch given yet - look for ROMBASENAME.ips
+                tmp = (char*)malloc(strlen(filename) + 4 + 1);
+                sprintf(tmp, "%s.ips", filename);
+                patchNames[patchNum] = tmp;
+                patchNum++;
 
-        if (type == IMAGE_GB) {
-            failed = !gbLoadRom(szFile);
-            if (!failed) {
-                gbGetHardwareType();
+                // no patch given yet - look for ROMBASENAME.ups
+                tmp = (char*)malloc(strlen(filename) + 4 + 1);
+                sprintf(tmp, "%s.ups", filename);
+                patchNames[patchNum] = tmp;
+                patchNum++;
+	    		
+                // no patch given yet - look for ROMBASENAME.bps
+                tmp = (char*)malloc(strlen(filename) + 4 + 1);
+                sprintf(tmp, "%s.bps", filename);
+                patchNames[patchNum] = tmp;
+                patchNum++;
 
-                // used for the handling of the gb Boot Rom
-                if (gbHardware & 7)
-                    gbCPUInit(biosFileNameGB, useBios);
+                // no patch given yet - look for ROMBASENAME.ppf
+                tmp = (char*)malloc(strlen(filename) + 4 + 1);
+                sprintf(tmp, "%s.ppf", filename);
+                patchNames[patchNum] = tmp;
+                patchNum++;
+            }
 
-                cartridgeType = IMAGE_GB;
-                emulator = GBSystem;
-                int size = gbRomSize, patchnum;
-                for (patchnum = 0; patchnum < patchNum; patchnum++) {
-                    fprintf(stdout, "Trying patch %s%s\n", patchNames[patchnum],
-                        applyPatch(patchNames[patchnum], &gbRom, &size) ? " [success]" : "");
-                }
-                if (size != gbRomSize) {
-                    extern bool gbUpdateSizes();
-                    gbUpdateSizes();
+            soundInit();
+
+            bool failed = false;
+
+            IMAGE_TYPE type = utilFindType(szFile);
+
+            if (type == IMAGE_UNKNOWN) {
+                systemMessage(0, "Unknown file type %s", szFile);
+                exit(-1);
+            }
+            cartridgeType = (int)type;
+
+            if (type == IMAGE_GB) {
+                failed = !gbLoadRom(szFile);
+                if (!failed) {
+                    gbGetHardwareType();
+
+                    // used for the handling of the gb Boot Rom
+                    if (gbHardware & 7)
+                        gbCPUInit(biosFileNameGB, useBios);
+
+                    cartridgeType = IMAGE_GB;
+                    emulator = GBSystem;
+                    int size = gbRomSize, patchnum;
+                    for (patchnum = 0; patchnum < patchNum; patchnum++) {
+                        fprintf(stdout, "Trying patch %s%s\n", patchNames[patchnum],
+                            applyPatch(patchNames[patchnum], &gbRom, &size) ? " [success]" : "");
+                    }
+                    if (size != gbRomSize) {
+                        extern bool gbUpdateSizes();
+                        gbUpdateSizes();
+                        gbReset();
+                    }
                     gbReset();
                 }
-                gbReset();
-            }
-        } else if (type == IMAGE_GBA) {
-            int size = CPULoadRom(szFile);
-            failed = (size == 0);
-            if (!failed) {
-                if (cpuSaveType == 0)
-                    utilGBAFindSave(size);
-                else
-                    saveType = cpuSaveType;
+            } 
+            /*
+            // Initialization routines for key maps, user preferences and GameBoy Advance ROMs were removed.
+            else if (type == IMAGE_GBA) {
+                int size = CPULoadRom(szFile);
+                failed = (size == 0);
+                if (!failed) {
+                    if (cpuSaveType == 0)
+                        utilGBAFindSave(size);
+                    else
+                        saveType = cpuSaveType;
 
-                sdlApplyPerImagePreferences();
+                    sdlApplyPerImagePreferences();
 
-                doMirroring(mirroringEnable);
+                    doMirroring(mirroringEnable);
 
-                cartridgeType = 0;
-                emulator = GBASystem;
+                    cartridgeType = 0;
+                    emulator = GBASystem;
 
-                CPUInit(biosFileNameGBA, useBios);
-                int patchnum;
-                for (patchnum = 0; patchnum < patchNum; patchnum++) {
-                    fprintf(stdout, "Trying patch %s%s\n", patchNames[patchnum],
-                        applyPatch(patchNames[patchnum], &rom, &size) ? " [success]" : "");
+                    CPUInit(biosFileNameGBA, useBios);
+                    int patchnum;
+                    for (patchnum = 0; patchnum < patchNum; patchnum++) {
+                        fprintf(stdout, "Trying patch %s%s\n", patchNames[patchnum],
+                            applyPatch(patchNames[patchnum], &rom, &size) ? " [success]" : "");
+                    }
+                    CPUReset();
                 }
-                CPUReset();
             }
-        }
 
-        if (failed) {
-            systemMessage(0, "Failed to load file %s", szFile);
+            if (failed) {
+                systemMessage(0, "Failed to load file %s", szFile);
+                exit(-1);
+            } else {
+            soundInit();
+            cartridgeType = 0;
+            strcpy(filename, "gnu_stub");
+            rom = (uint8_t*)malloc(0x2000000);
+            workRAM = (uint8_t*)calloc(1, 0x40000);
+            bios = (uint8_t*)calloc(1, 0x4000);
+            internalRAM = (uint8_t*)calloc(1, 0x8000);
+            paletteRAM = (uint8_t*)calloc(1, 0x400);
+            vram = (uint8_t*)calloc(1, 0x20000);
+            oam = (uint8_t*)calloc(1, 0x400);
+            pix = (uint8_t*)calloc(1, 4 * 241 * 162);
+            ioMem = (uint8_t*)calloc(1, 0x400);
+
+            emulator = GBASystem;
+
+            CPUInit(biosFileNameGBA, useBios);
+            CPUReset();
+        }
+        */
+
+        sdlReadBattery();
+
+        if (debugger)
+            remoteInit();
+
+        int flags = SDL_INIT_VIDEO | SDL_INIT_TIMER;
+
+        if (SDL_Init(flags) < 0) {
+            systemMessage(0, "Failed to init SDL: %s", SDL_GetError());
             exit(-1);
         }
-    } else {
-        soundInit();
-        cartridgeType = 0;
-        strcpy(filename, "gnu_stub");
-        rom = (uint8_t*)malloc(0x2000000);
-        workRAM = (uint8_t*)calloc(1, 0x40000);
-        bios = (uint8_t*)calloc(1, 0x4000);
-        internalRAM = (uint8_t*)calloc(1, 0x8000);
-        paletteRAM = (uint8_t*)calloc(1, 0x400);
-        vram = (uint8_t*)calloc(1, 0x20000);
-        oam = (uint8_t*)calloc(1, 0x400);
-        pix = (uint8_t*)calloc(1, 4 * 241 * 162);
-        ioMem = (uint8_t*)calloc(1, 0x400);
 
-        emulator = GBASystem;
-
-        CPUInit(biosFileNameGBA, useBios);
-        CPUReset();
-    }
-
-    sdlReadBattery();
-
-    if (debugger)
-        remoteInit();
-
-    int flags = SDL_INIT_VIDEO | SDL_INIT_TIMER;
-
-    if (SDL_Init(flags) < 0) {
-        systemMessage(0, "Failed to init SDL: %s", SDL_GetError());
-        exit(-1);
-    }
-
-    if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
-        systemMessage(0, "Failed to init joystick support: %s", SDL_GetError());
-    }
-
-#if WITH_LIRC
-    StartLirc();
-#endif
-    inputInitJoysticks();
-
-    if (cartridgeType == IMAGE_GBA) {
-        sizeX = 240;
-        sizeY = 160;
-        systemFrameSkip = frameSkip;
-    } else if (cartridgeType == IMAGE_GB) {
-        if (gbBorderOn) {
-            sizeX = 256;
-            sizeY = 224;
-            gbBorderLineSkip = 256;
-            gbBorderColumnSkip = 48;
-            gbBorderRowSkip = 40;
-        } else {
-            sizeX = 160;
-            sizeY = 144;
-            gbBorderLineSkip = 160;
-            gbBorderColumnSkip = 0;
-            gbBorderRowSkip = 0;
+        if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
+            systemMessage(0, "Failed to init joystick support: %s", SDL_GetError());
         }
-        systemFrameSkip = gbFrameSkip;
-    } else {
-        sizeX = 320;
-        sizeY = 240;
-    }
 
-    sdlReadDesktopVideoMode();
+#if     WITH_LIRC
+        StartLirc();
+#endif
+        inputInitJoysticks();
 
-    sdlInitVideo();
-
-    filterFunction = initFilter(filter, systemColorDepth, sizeX);
-    if (!filterFunction) {
-        fprintf(stderr, "Unable to init filter '%s'\n", getFilterName(filter));
-        exit(-1);
-    }
-
-    if (systemColorDepth == 15)
-        systemColorDepth = 16;
-
-    if (systemColorDepth != 16 && systemColorDepth != 24 && systemColorDepth != 32) {
-        fprintf(stderr, "Unsupported color depth '%d'.\nOnly 16, 24 and 32 bit color depths are supported\n", systemColorDepth);
-        exit(-1);
-    }
-
-    fprintf(stdout, "Color depth: %d\n", systemColorDepth);
-
-    utilUpdateSystemColorMaps();
-
-    if (delta == NULL) {
-        delta = (uint8_t*)malloc(delta_size);
-        memset(delta, 255, delta_size);
-    }
-
-    ifbFunction = initIFBFilter(ifbType, systemColorDepth);
-
-    emulating = 1;
-    renderedFrames = 0;
-
-    autoFrameSkipLastTime = throttleLastTime = systemGetClock();
-
-    // now we can enable cheats?
-    {
-        int i;
-        for (i = 0; i < preparedCheats; i++) {
-            const char* p;
-            int l;
-            p = preparedCheatCodes[i];
-            l = strlen(p);
-            if (l == 17 && p[8] == ':') {
-                fprintf(stdout, "Adding cheat code %s\n", p);
-                cheatsAddCheatCode(p, p);
-            } else if (l == 13 && p[8] == ' ') {
-                fprintf(stdout, "Adding CBA cheat code %s\n", p);
-                cheatsAddCBACode(p, p);
-            } else if (l == 8) {
-                fprintf(stdout, "Adding GB(GS) cheat code %s\n", p);
-                gbAddGsCheat(p, p);
+        if (cartridgeType == IMAGE_GBA) {
+            sizeX = 240;
+            sizeY = 160;
+            systemFrameSkip = frameSkip;
+        } else if (cartridgeType == IMAGE_GB) {
+            if (gbBorderOn) {
+                sizeX = 256;
+                sizeY = 224;
+                gbBorderLineSkip = 256;
+                gbBorderColumnSkip = 48;
+                gbBorderRowSkip = 40;
             } else {
-                fprintf(stderr, "Unknown format for cheat code %s\n", p);
+                sizeX = 160;
+                sizeY = 144;
+                gbBorderLineSkip = 160;
+                gbBorderColumnSkip = 0;
+                gbBorderRowSkip = 0;
             }
-        }
-    }
-
-    while (emulating) {
-        if (!paused && active) {
-            if (debugger && emulator.emuHasDebugger)
-                remoteStubMain();
-            else {
-                emulator.emuMain(emulator.emuCount);
-                if (rewindSaveNeeded && rewindMemory && emulator.emuWriteMemState) {
-                    handleRewinds();
-                }
-
-                rewindSaveNeeded = false;
-            }
+            systemFrameSkip = gbFrameSkip;
         } else {
-            SDL_Delay(500);
+            sizeX = 320;
+            sizeY = 240;
         }
-        sdlPollEvents();
-#if WITH_LIRC
-        lircCheckInput();
+
+        sdlReadDesktopVideoMode();
+
+        sdlInitVideo();
+
+        filterFunction = initFilter(filter, systemColorDepth, sizeX);
+        if (!filterFunction) {
+            fprintf(stderr, "Unable to init filter '%s'\n", getFilterName(filter));
+            exit(-1);
+        }
+
+        if (systemColorDepth == 15)
+            systemColorDepth = 16;
+
+        if (systemColorDepth != 16 && systemColorDepth != 24 && systemColorDepth != 32) {
+            fprintf(stderr, "Unsupported color depth '%d'.\nOnly 16, 24 and 32 bit color depths are supported\n", systemColorDepth);
+            exit(-1);
+        }
+
+        fprintf(stdout, "Color depth: %d\n", systemColorDepth);
+
+        utilUpdateSystemColorMaps();
+
+        if (delta == NULL) {
+            delta = (uint8_t*)malloc(delta_size);
+            memset(delta, 255, delta_size);
+        }
+
+        ifbFunction = initIFBFilter(ifbType, systemColorDepth);
+
+        emulating = 1;
+        renderedFrames = 0;
+
+        autoFrameSkipLastTime = throttleLastTime = systemGetClock();
+
+        // now we can enable cheats?
+        {
+            int i;
+            for (i = 0; i < preparedCheats; i++) {
+                const char* p;
+                int l;
+                p = preparedCheatCodes[i];
+                l = strlen(p);
+                if (l == 17 && p[8] == ':') {
+                    fprintf(stdout, "Adding cheat code %s\n", p);
+                    cheatsAddCheatCode(p, p);
+                } else if (l == 13 && p[8] == ' ') {
+                    fprintf(stdout, "Adding CBA cheat code %s\n", p);
+                    cheatsAddCBACode(p, p);
+                } else if (l == 8) {
+                    fprintf(stdout, "Adding GB(GS) cheat code %s\n", p);
+                    gbAddGsCheat(p, p);
+                } else {
+                    fprintf(stderr, "Unknown format for cheat code %s\n", p);
+                }
+            }
+        }
+
+        while (emulating) {
+            if (!paused && active) {
+                if (debugger && emulator.emuHasDebugger)
+                    remoteStubMain();
+                else {
+                    emulator.emuMain(emulator.emuCount);
+                    if (rewindSaveNeeded && rewindMemory && emulator.emuWriteMemState) {
+                        handleRewinds();
+                    }
+
+                    rewindSaveNeeded = false;
+                }
+            } else {
+                SDL_Delay(500);
+            }
+            sdlPollEvents();
+#if     WITH_LIRC
+            lircCheckInput();
 #endif
-        if (mouseCounter) {
-            mouseCounter--;
-            if (mouseCounter == 0)
-                SDL_ShowCursor(SDL_DISABLE);
+            if (mouseCounter) {
+                mouseCounter--;
+                if (mouseCounter == 0)
+                    SDL_ShowCursor(SDL_DISABLE);
+            }
+        }
+
+        emulating = 0;
+        fprintf(stdout, "Shutting down\n");
+        remoteCleanUp();
+        soundShutdown();
+
+        if (openGL) {
+            SDL_GL_DeleteContext(glcontext);
+        }
+
+        if (gbRom != NULL || rom != NULL) {
+            sdlWriteBattery();
+            emulator.emuCleanUp();
+        }
+
+        if (delta) {
+            free(delta);
+            delta = NULL;
+        }
+
+        if (filterPix) {
+            free(filterPix);
+            filterPix = NULL;
+        }
+
+        for (int i = 0; i < patchNum; i++) {
+            free(patchNames[i]);
+        }
+
+#if     WITH_LIRC
+        StopLirc();
+#endif
+
+        SaveConfigFile();
+        CloseConfig();
+        SDL_Quit();
+        return 0;
         }
     }
-
-    emulating = 0;
-    fprintf(stdout, "Shutting down\n");
-    remoteCleanUp();
-    soundShutdown();
-
-    if (openGL) {
-        SDL_GL_DeleteContext(glcontext);
-    }
-
-    if (gbRom != NULL || rom != NULL) {
-        sdlWriteBattery();
-        emulator.emuCleanUp();
-    }
-
-    if (delta) {
-        free(delta);
-        delta = NULL;
-    }
-
-    if (filterPix) {
-        free(filterPix);
-        filterPix = NULL;
-    }
-
-    for (int i = 0; i < patchNum; i++) {
-        free(patchNames[i]);
-    }
-
-#if WITH_LIRC
-    StopLirc();
-#endif
-
-    SaveConfigFile();
-    CloseConfig();
-    SDL_Quit();
-    return 0;
 }
 
 void systemMessage(int num, const char* msg, ...)
@@ -1955,6 +1965,9 @@ void drawSpeed(uint8_t* screen, int pitch, int x, int y)
 
 void systemDrawScreen()
 {
+    // !!!AFL
+    return;
+
     unsigned int destPitch = destWidth * (systemColorDepth >> 3);
     uint8_t* screen;
 
